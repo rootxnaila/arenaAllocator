@@ -1,41 +1,64 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "arena.h"
-#include "array.h"
-#include "linkedlist.h"
+#include "queue.h"
+
+#define ARENA_CAPACITY (20 * 1024 * 1024) //kapasitas diperbesar buat dataset 10.000
 
 int main() {
-    printf("DEMO ARENA ALLOCATOR (progress week 2) ===\n");
-    //book arena
-    Arena* my_arena = arena_create(100);
+    printf("=== EKSPERIMEN BATCH PROCESSING: AI DATA PIPELINE ===\n\n");
     
-    printf("\n---Try On Array---\n");
-    size_t arr_len = 5;
-    size_t my_array_offset = array_create(my_arena, arr_len);
+    Arena* pipeline_arena = arena_create(ARENA_CAPACITY);
+    Queue ai_queue;
+    queue_init(&ai_queue);
+
+    clock_t start_time = clock();
+
+    printf("1. Membaca file dataset dan memasukkan ke Queue (Enqueue)...\n");
     
-    //isi array
-    array_set(my_arena, my_array_offset, 0, 10);
-    array_set(my_arena, my_array_offset, 1, 20);
-    array_set(my_arena, my_array_offset, 2, 30);
-    array_set(my_arena, my_array_offset, 3, 40);
-    array_set(my_arena, my_array_offset, 4, 50);
+    FILE *file = fopen("dataset_10k.txt", "r");
+    if (!file) {
+        printf("Error: File dataset_10k.txt tidak ditemukan di folder ini!\n");
+        arena_destroy(pipeline_arena);
+        return 1;
+    }
+
+    char line[128];
+    int enqueue_count = 0;
     
-    array_print(my_arena, my_array_offset, arr_len);
-    arena_dump(my_arena);
+    while (fgets(line, sizeof(line), file)) {
+        line[strcspn(line, "\n")] = 0; 
+        
+        if (!enqueue(pipeline_arena, &ai_queue, line)) {
+            printf("CRITICAL ERROR: Arena Penuh di baris ke-%d!\n", enqueue_count);
+            break;
+        }
+        enqueue_count++;
+    }
+    fclose(file);
+    printf(" -> Success Enqueue %d data!\n\n", enqueue_count);
 
-    printf("\n---Try On Linked List Berbasis Offset---\n");
-    LinkedList my_list;
-    ll_init(&my_list);
+    printf("2. Mulai Pemrosesan Data secara massal (Dequeue)...\n");
+    char processed_message[128];
+    int dequeue_count = 0;
+    while (!is_empty(&ai_queue)) {
+        if (dequeue(pipeline_arena, &ai_queue, processed_message)) {
+            dequeue_count++;
+        }
+    }
+    printf(" -> Success memproses %d data!\n", dequeue_count);
 
-    //input 3 data linkedlist
-    ll_insert_last(my_arena, &my_list, 100);
-    ll_insert_last(my_arena, &my_list, 200);
-    ll_insert_last(my_arena, &my_list, 300);
+    printf("\n3. Batch Done. Delete Memory Instantly O(1)...\n");
+    arena_reset(pipeline_arena);
+    
+    clock_t end_time = clock();
+    double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
 
-    //tampil isi linkedlist
-    ll_print(my_arena, &my_list);
-    arena_dump(my_arena);
+    printf("\n[Last Status Arena] Offset = %zu (All Clear!)\n", pipeline_arena->offset);
+    printf("Execute Time Total: %f detik\n", time_taken);
 
-    //clear
-    arena_destroy(my_arena);
+    arena_destroy(pipeline_arena);
     return 0;
 }

@@ -13,7 +13,7 @@ typedef struct {
 
 //struct untuk head linked list
 typedef struct {
-    size_t head_offset; // arak ke node pertama
+    size_t head_offset; //jarak ke node pertama
 } LinkedList;
 
 void ll_init(LinkedList* list);
