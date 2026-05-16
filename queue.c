@@ -2,15 +2,18 @@
 #include <string.h>
 #include "queue.h"
 
+// init antrean kosong dengan mengatur nilai head dan tail ke offset null
 void queue_init(Queue* q) {
     q->head_offset = OFFSET_NULL;
     q->tail_offset = OFFSET_NULL;
 }
 
+// memeriksa apakah antrean sedang dalam keadaan kosong berdasarkan posisi head
 int is_empty(Queue* q) { //antrean kosong?
     return q->head_offset == OFFSET_NULL;
 }
 
+// menyisipkan data teks ke belakang antrean n minta ruang dari arena 
 int enqueue(Arena* arena, Queue* q, const char* message) {
     //minta tempat di arena
     size_t new_node_offset = arena_alloc(arena, sizeof(QueueNode));
@@ -32,6 +35,7 @@ int enqueue(Arena* arena, Queue* q, const char* message) {
     return 1;
 }
 
+// mengeluarkan data terdepan dari antrean dengan menggeser head offset tanpa memanggil fungsi free
 int dequeue(Arena* arena, Queue* q, char* out_message) {
     if (is_empty(q)) return 0; 
 

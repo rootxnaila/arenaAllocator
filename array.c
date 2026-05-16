@@ -15,11 +15,11 @@ void array_set(Arena* arena, size_t array_offset, size_t index, int value) {
     }
 }
 
-void array_print(Arena* arena, size_t array_offset, size_t length) {
+void array_print(Arena* arena, size_t array_offset, size_t length) { //cetak array sampe panjang yg diberi
     int* arr = (int*)arena_get(arena, array_offset);
     if (!arr) return;
 
-    printf("Isi Array (offset mulai: %zu): [", array_offset);
+    printf("Isi Array (offset mulai: %zu): [", array_offset); //print koma
     for (size_t i = 0; i < length; i++) {
         printf("%d", arr[i]);
         if (i < length - 1) printf(", ");

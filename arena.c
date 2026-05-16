@@ -3,17 +3,17 @@
 #include <stdlib.h>
 
 //create arena
-Arena* arena_create(size_t capacity) { 
-    Arena* arena = (Arena*)malloc(sizeof(Arena));
+Arena* arena_create(size_t capacity) { //terima 
+    Arena* arena = (Arena*)malloc(sizeof(Arena)); //minta os
     if (!arena) return NULL;
     
-    arena->buffer = (unsigned char*)malloc(capacity);
+    arena->buffer = (unsigned char*)malloc(capacity); //minta gudang 
     if (!arena->buffer) {
-        free(arena);
-        return NULL;
+        free(arena); //clear
+        return NULL; //cancel
     }
     
-    arena->capacity = capacity;
+    arena->capacity = capacity; //max
     arena->offset = 0; //mulai dr nol
     return arena;
 }

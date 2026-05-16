@@ -8,7 +8,7 @@ this system was developed as the Final Project for the Data Structure course 202
 - Nathanael Purwanto - documentation & design
 
 ## Core Concept
-inspired by the article ["Untangling Lifetimes: The Arena Allocator"](https://www.dgtlgrove.com/p/untangling-lifetimes-the-arena-allocator) by Ryan Fleury, this system does not free memory on a per-object basis. instead, memory is allocated in a single large block (arena) upfront. raw data is queued within this arena. once a data batch is processed, the entire arena memory is instantly reset with an O(1) time complexity.
+inspired by the article ["Untangling Lifetimes: The Arena Alloc ator"](https://www.dgtlgrove.com/p/untangling-lifetimes-the-arena-allocator) by Ryan Fleury, this system does not free memory on a per-object basis. instead, memory is allocated in a single large block (arena) upfront. raw data is queued within this arena. once a data batch is processed, the entire arena memory is instantly reset with an O(1) time complexity.
 
 ## System Architecture & Rules
 - Arena as ADT: memory access is strictly isolated. data structures cannot access the buffer directly and must route through the API (e.g., arena_alloc and arena_reset).
